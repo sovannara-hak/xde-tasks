@@ -45,4 +45,17 @@ sTask.addPort(p3_in)
 
 xdeTasksUtils.synchronizer.startTask()
 
+p1.write(v1)
+p2.write(v2)
+p3.write(d3)
+
+data={}
+
+while True:
+	if sTask.ready() == True:
+		data = sTask.getData()
+		print data['v1_in']
+		break
+
+
 dsimi.interactive.shell()()
