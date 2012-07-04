@@ -54,7 +54,7 @@ class PortSynchronizer(dsimi.rtt.Task):
 		# Check data flag, if all flags are true, all data are ready
 		if self.checkAllFlag():
 			self.isReady = True
-			print self.getName()+" ready"
+			#print self.getName()+" ready"
 			for flagKeys in self.dataFlag.iterkeys():
 				self.dataFlag[flagKeys] = False
 
@@ -69,7 +69,7 @@ class PortSynchronizer(dsimi.rtt.Task):
 			self.isReady = False
 			return self.data
 		else:
-			print "Not Ready, returning previous value"
+			#print "Not Ready, returning previous value"
 			return self.data
 
 	def addPort(self,port_in):
