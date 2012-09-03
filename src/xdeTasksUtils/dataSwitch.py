@@ -28,32 +28,35 @@ class DataSwitch(dsimi.rtt.Task):
 		self.readPortList = []
 		self.portListNames = []
 
+		#is the data switch forwarding
+		self.active = False
+
 		#Switch list
 		self.componentList = []
-
-	#def updatePortListNames:
-	#	for port in self.portList:
-	#		self.portListNames.append(port.getName())
-	#	return
 
 	#Add a component to the switch list
 	#check if the port are consistent with the other components
 	#in the list
 	#task: a new component that becomes a new state for the switch
-	def addComponent(self, task):
+	def addComponent(self, component):
 		validPort = False
 		#check if list is empty
 
-		newPortListNames = task.getPortNames()
+		newPortListNames = component.getPortNames()
 		if len(componentList) == 1: #list was empty
 			self.portListNames.append(newPortListNames)
 
 			#creation of output ports
 			for portName in newPortListNames:
-				port = task.getPort(portName)
+				port = component.getPort(portName)
 				portType = port.getTypeInfo()
-				self.portList.append(self.addCreateOutputPort(port.getName(), portType.getTypeName()))
-				self.readPortList.append(self.addCreateInputPort(port.getName()+"_in", portType.getTypeName(), True))
+				dataSwitchOutPort = self.addCreateOutputPort(port.getName(), portType.getTypeName())
+				self.portList.append(dataSwitchOutPort)
+				#creation of input port that will be used to forward
+				#data from a component to the data switch
+				dataSwitchInPort = self.addCreateInputPort(port.getName()+"_in", portType.getTypeName(), True)
+				self.readPortList.append(dataSwitchInPort)
+
 			validPort = True
 		else
 			#check if port list is consistent
@@ -61,7 +64,7 @@ class DataSwitch(dsimi.rtt.Task):
 			validPort = isIn(newPortListNames, self.portListNames)
 
 		if validPort:
-			self.componentList.append(task)
+			self.componentList.append(component)
 		else
 			print "Ports on component do not match"
 			return False
@@ -72,30 +75,63 @@ class DataSwitch(dsimi.rtt.Task):
 	def disconnect(self):
 		for port in self.portList:
 			port.disconnect()
+		return
 
+	def forward(self)
+		#read output from data switch input
+		#write data in data switch output
+		for portName in portListNames:
+        	data = self.getPort(portName+"_in").read()
+			self.getPort(portName).write(data[0])
 		return
 
 	def removeComponent(self, componentId):
 		pass
 
-	def switch(self, componentId):
-		pass
+	def connect(self):
+		for port in portListNames:
+			self.getPort(portListNames+"_in").connectTo(self.selectComponent.getPort(portListNames))
+		return
+
+	def switch(self, componentName):
+		global self.selectComponent
+
+		self.disconnect()
+		for component in componentList:
+ 			if component.getName() == componentName:
+            	self.selectComponent = component
+                #connection of component Out to data switch in
+				self.connect()
+				return
+			else
+				print "Component "+componentName+" not found in list"
+		return
 
 	#print state info of the switch
 	#and component list
 	def getState(self):
-		pass
+		if not self.selectComponent:
+			selectName = self.selectComponent.getName()
+
+		for component in self.componentList:
+			if selectName == component.getName()
+				print "+ "+component.getName()
+			else
+				print "- "+component.getName()
+		return
 
 	#forward portId to the output instead of the
 	#default component's port
 	def overide(self, portId):
 		pass
 
-	def write(self, portId):
+	def updateHook(self):
 		pass
 
-	def read(self, portId):
+	def startHook(self):
 		pass
 
+	def stopHook(self):
+		pass
 
 
